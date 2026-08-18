@@ -1,0 +1,772 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Lash Designer | Agendamentos</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #fff7fa;
+            color: #5c3741;
+        }
+
+        header {
+            background: #f3a6b8;
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 30px;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 15px;
+        }
+
+        nav {
+            background: #ffdce5;
+            padding: 12px;
+            text-align: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: #9b4359;
+            margin: 0 15px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            color: #d14b68;
+        }
+
+        .inicio {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .inicio h2 {
+            color: #c94f6d;
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .inicio p {
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        .botao {
+            display: inline-block;
+            background: #d96b87;
+            color: white;
+            padding: 13px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .botao:hover {
+            background: #c65370;
+        }
+
+        section {
+            padding: 45px 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        section h2 {
+            text-align: center;
+            color: #c94f6d;
+            margin-bottom: 30px;
+        }
+
+        .servicos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            color: #c94f6d;
+            margin-bottom: 10px;
+        }
+
+        .preco {
+            font-size: 20px;
+            font-weight: bold;
+            color: #a73f58;
+            margin-top: 15px;
+        }
+
+        .agendamento {
+            background: #ffe9ef;
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        form {
+            display: grid;
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e5a8b8;
+            border-radius: 8px;
+            background: white;
+            font-size: 15px;
+        }
+
+        .calendario {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .mes {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .mes button {
+            background: #d96b87;
+            color: white;
+            border: none;
+            padding: 8px 13px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        #nomeMes {
+            color: #c94f6d;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .dias {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 7px;
+        }
+
+        .diaSemana {
+            text-align: center;
+            font-weight: bold;
+            color: #a64b60;
+            padding: 8px 0;
+        }
+
+        .dia {
+            min-height: 45px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #d9f5dc;
+            color: #35643d;
+            font-weight: bold;
+        }
+
+        .dia:hover {
+            transform: scale(1.04);
+        }
+
+        .dia.indisponivel {
+            background: #eee;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        .dia.selecionado {
+            background: #d96b87;
+            color: white;
+        }
+
+        .vazio {
+            min-height: 45px;
+        }
+
+        .legenda {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .disponivel {
+            color: #35643d;
+        }
+
+        .indisp {
+            color: #999;
+        }
+
+        #listaAgendamentos {
+            margin-top: 20px;
+        }
+
+        .agendamento-card {
+            background: white;
+            padding: 18px;
+            margin-bottom: 12px;
+            border-left: 5px solid #d96b87;
+            border-radius: 8px;
+        }
+
+        .agendamento-card strong {
+            color: #c94f6d;
+        }
+
+        .excluir {
+            margin-top: 10px;
+            background: #e57373;
+            color: white;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        footer {
+            background: #f3a6b8;
+            color: white;
+            text-align: center;
+            padding: 25px;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+            nav a {
+                display: inline-block;
+                margin: 5px;
+            }
+
+            .inicio h2 {
+                font-size: 26px;
+            }
+
+            .dias {
+                gap: 3px;
+            }
+
+            .dia {
+                min-height: 38px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>✨ Lash Designer</h1>
+    <p>Realçando sua beleza com delicadeza 💗</p>
+</header>
+
+<nav>
+    <a href="#inicio">Início</a>
+    <a href="#servicos">Serviços</a>
+    <a href="#calendario">Calendário</a>
+    <a href="#agendar">Agendar</a>
+    <a href="#agendamentos">Agendamentos</a>
+</nav>
+
+<section class="inicio" id="inicio">
+    <h2>Seu olhar merece esse cuidado 💕</h2>
+    <p>
+        Alongamento de cílios com carinho, qualidade e um resultado incrível.
+    </p>
+
+    <a href="#agendar" class="botao">
+        Agendar horário
+    </a>
+</section>
+
+<section id="servicos">
+    <h2>✨ Nossos Serviços</h2>
+
+    <div class="servicos">
+
+        <div class="card">
+            <h3>Fio a Fio</h3>
+            <p>Resultado delicado e natural.</p>
+            <p class="preco">R$ 100,00</p>
+        </div>
+
+        <div class="card">
+            <h3>Volume Brasileiro</h3>
+            <p>Mais volume e destaque para o olhar.</p>
+            <p class="preco">R$ 120,00</p>
+        </div>
+
+        <div class="card">
+            <h3>Volume Russo</h3>
+            <p>Um olhar marcante e sofisticado.</p>
+            <p class="preco">R$ 140,00</p>
+        </div>
+
+        <div class="card">
+            <h3>Manutenção</h3>
+            <p>Manutenção para conservar seus cílios.</p>
+            <p class="preco">R$ 80,00</p>
+        </div>
+
+    </div>
+</section>
+
+<section id="calendario">
+    <h2>📅 Calendário</h2>
+
+    <div class="calendario">
+
+        <div class="mes">
+            <button onclick="mesAnterior()">❮</button>
+
+            <span id="nomeMes"></span>
+
+            <button onclick="proximoMes()">❯</button>
+        </div>
+
+        <div class="dias" id="calendarioDias"></div>
+
+        <div class="legenda">
+            <p class="disponivel">🟢 Data disponível</p>
+            <p class="indisp">⚪ Data indisponível</p>
+        </div>
+
+    </div>
+</section>
+
+<section id="agendar">
+
+    <h2>💗 Faça seu Agendamento</h2>
+
+    <div class="agendamento">
+
+        <form id="formAgendamento">
+
+            <div>
+                <label>Nome:</label>
+                <input
+                    type="text"
+                    id="nome"
+                    placeholder="Digite seu nome"
+                    required
+                >
+            </div>
+
+            <div>
+                <label>Telefone:</label>
+                <input
+                    type="tel"
+                    id="telefone"
+                    placeholder="(00) 00000-0000"
+                    required
+                >
+            </div>
+
+            <div>
+                <label>Serviço:</label>
+
+                <select id="servico" required>
+                    <option value="">Selecione um serviço</option>
+                    <option>Fio a Fio - R$ 100,00</option>
+                    <option>Volume Brasileiro - R$ 120,00</option>
+                    <option>Volume Russo - R$ 140,00</option>
+                    <option>Manutenção - R$ 80,00</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Data:</label>
+
+                <input
+                    type="date"
+                    id="data"
+                    required
+                >
+            </div>
+
+            <div>
+                <label>Horário:</label>
+
+                <select id="horario" required>
+                    <option value="">Selecione um horário</option>
+                    <option>09:00</option>
+                    <option>10:00</option>
+                    <option>11:00</option>
+                    <option>13:00</option>
+                    <option>14:00</option>
+                    <option>15:00</option>
+                    <option>16:00</option>
+                    <option>17:00</option>
+                </select>
+            </div>
+
+            <button class="botao" type="submit">
+                Confirmar Agendamento 💕
+            </button>
+
+        </form>
+
+    </div>
+</section>
+
+<section id="agendamentos">
+
+    <h2>📋 Agendamentos</h2>
+
+    <div id="listaAgendamentos">
+        <p>Nenhum agendamento realizado.</p>
+    </div>
+
+</section>
+
+<footer>
+    <p>© 2026 Lash Designer</p>
+    <p>Feito com 💗</p>
+</footer>
+
+<script>
+
+    let dataAtual = new Date();
+
+    let agendamentos =
+        JSON.parse(localStorage.getItem("agendamentos")) || [];
+
+    const nomesMeses = [
+        "Janeiro",
+        "Fevereiro",
+        "Março",
+        "Abril",
+        "Maio",
+        "Junho",
+        "Julho",
+        "Agosto",
+        "Setembro",
+        "Outubro",
+        "Novembro",
+        "Dezembro"
+    ];
+
+    function criarCalendario() {
+
+        const ano = dataAtual.getFullYear();
+        const mes = dataAtual.getMonth();
+
+        document.getElementById("nomeMes").textContent =
+            nomesMeses[mes] + " " + ano;
+
+        const calendario =
+            document.getElementById("calendarioDias");
+
+        calendario.innerHTML = "";
+
+        const semana = [
+            "Dom",
+            "Seg",
+            "Ter",
+            "Qua",
+            "Qui",
+            "Sex",
+            "Sáb"
+        ];
+
+        semana.forEach(dia => {
+
+            const elemento = document.createElement("div");
+
+            elemento.className = "diaSemana";
+            elemento.textContent = dia;
+
+            calendario.appendChild(elemento);
+
+        });
+
+        const primeiroDia =
+            new Date(ano, mes, 1).getDay();
+
+        const quantidadeDias =
+            new Date(ano, mes + 1, 0).getDate();
+
+        for (let i = 0; i < primeiroDia; i++) {
+
+            const vazio =
+                document.createElement("div");
+
+            vazio.className = "vazio";
+
+            calendario.appendChild(vazio);
+        }
+
+        for (let dia = 1; dia <= quantidadeDias; dia++) {
+
+            const botao =
+                document.createElement("button");
+
+            botao.className = "dia";
+
+            botao.textContent = dia;
+
+            const dataFormatada =
+                ano + "-" +
+                String(mes + 1).padStart(2, "0") + "-" +
+                String(dia).padStart(2, "0");
+
+            const hoje = new Date();
+
+            hoje.setHours(0, 0, 0, 0);
+
+            const dataDia =
+                new Date(ano, mes, dia);
+
+            // Dias anteriores ficam indisponíveis
+            if (dataDia < hoje) {
+
+                botao.classList.add("indisponivel");
+                botao.disabled = true;
+
+            } else {
+
+                // Verifica se já existem 8 agendamentos
+                // para aquela data
+                const quantidade =
+                    agendamentos.filter(
+                        a => a.data === dataFormatada
+                    ).length;
+
+                if (quantidade >= 8) {
+
+                    botao.classList.add("indisponivel");
+                    botao.disabled = true;
+
+                } else {
+
+                    botao.onclick = function() {
+
+                        document.getElementById("data").value =
+                            dataFormatada;
+
+                        document
+                            .getElementById("agendar")
+                            .scrollIntoView({
+                                behavior: "smooth"
+                            });
+
+                    };
+
+                }
+
+            }
+
+            calendario.appendChild(botao);
+        }
+    }
+
+    function mesAnterior() {
+
+        dataAtual.setMonth(
+            dataAtual.getMonth() - 1
+        );
+
+        criarCalendario();
+    }
+
+    function proximoMes() {
+
+        dataAtual.setMonth(
+            dataAtual.getMonth() + 1
+        );
+
+        criarCalendario();
+    }
+
+    document
+        .getElementById("formAgendamento")
+        .addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            const nome =
+                document.getElementById("nome").value;
+
+            const telefone =
+                document.getElementById("telefone").value;
+
+            const servico =
+                document.getElementById("servico").value;
+
+            const data =
+                document.getElementById("data").value;
+
+            const horario =
+                document.getElementById("horario").value;
+
+            // Verifica se o horário já está ocupado
+            const horarioOcupado =
+                agendamentos.some(
+                    a =>
+                        a.data === data &&
+                        a.horario === horario
+                );
+
+            if (horarioOcupado) {
+
+                alert(
+                    "Esse horário já está ocupado. Escolha outro horário."
+                );
+
+                return;
+            }
+
+            const novoAgendamento = {
+
+                nome,
+                telefone,
+                servico,
+                data,
+                horario
+
+            };
+
+            agendamentos.push(novoAgendamento);
+
+            localStorage.setItem(
+                "agendamentos",
+                JSON.stringify(agendamentos)
+            );
+
+            alert(
+                "Agendamento realizado com sucesso! 💗"
+            );
+
+            document
+                .getElementById("formAgendamento")
+                .reset();
+
+            mostrarAgendamentos();
+
+            criarCalendario();
+
+        });
+
+    function mostrarAgendamentos() {
+
+        const lista =
+            document.getElementById("listaAgendamentos");
+
+        lista.innerHTML = "";
+
+        if (agendamentos.length === 0) {
+
+            lista.innerHTML =
+                "<p>Nenhum agendamento realizado.</p>";
+
+            return;
+        }
+
+        agendamentos.forEach(
+            (agendamento, index) => {
+
+                const card =
+                    document.createElement("div");
+
+                card.className =
+                    "agendamento-card";
+
+                const data =
+                    agendamento.data.split("-");
+
+                const dataBrasileira =
+                    data[2] + "/" +
+                    data[1] + "/" +
+                    data[0];
+
+                card.innerHTML = `
+
+                    <strong>${agendamento.nome}</strong>
+
+                    <p>📞 ${agendamento.telefone}</p>
+
+                    <p>👁️ ${agendamento.servico}</p>
+
+                    <p>📅 ${dataBrasileira}</p>
+
+                    <p>⏰ ${agendamento.horario}</p>
+
+                    <button
+                        class="excluir"
+                        onclick="excluirAgendamento(${index})">
+                        Cancelar
+                    </button>
+
+                `;
+
+                lista.appendChild(card);
+
+            }
+        );
+    }
+
+    function excluirAgendamento(index) {
+
+        if (
+            confirm(
+                "Deseja cancelar este agendamento?"
+            )
+        ) {
+
+            agendamentos.splice(index, 1);
+
+            localStorage.setItem(
+                "agendamentos",
+                JSON.stringify(agendamentos)
+            );
+
+            mostrarAgendamentos();
+
+            criarCalendario();
+        }
+    }
+
+    criarCalendario();
+
+    mostrarAgendamentos();
+
+</script>
+
+</body>
+</html>
+```
