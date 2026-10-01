@@ -1,0 +1,387 @@
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login Administrativo | Lash Designer</title>
+
+    <!-- Firebase -->
+   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+<script src="js/firebase-config.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #fff7fa;
+            color: #5c3741;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            padding: 20px;
+        }
+
+        /* Fundo decorativo */
+        .fundo {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .bolinha {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.45;
+        }
+
+        .bolinha1 {
+            width: 220px;
+            height: 220px;
+            background: #ffdce5;
+            top: -80px;
+            left: -70px;
+        }
+
+        .bolinha2 {
+            width: 180px;
+            height: 180px;
+            background: #f3a6b8;
+            bottom: -60px;
+            right: -50px;
+        }
+
+        .bolinha3 {
+            width: 90px;
+            height: 90px;
+            background: #ffe9ef;
+            top: 20%;
+            right: 12%;
+        }
+
+        /* Caixa de login */
+        .login {
+            position: relative;
+            z-index: 1;
+
+            width: 100%;
+            max-width: 420px;
+
+            background: white;
+            padding: 40px 35px;
+
+            border-radius: 22px;
+
+            box-shadow: 0 8px 30px rgba(92, 55, 65, 0.15);
+
+            border: 1px solid #f8d7df;
+        }
+
+        /* Cabeçalho */
+        .logo {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .logo .icone {
+            font-size: 42px;
+            margin-bottom: 8px;
+        }
+
+        h1 {
+            margin: 0;
+            color: #c94f6d;
+            font-size: 28px;
+        }
+
+        .subtitulo {
+            margin-top: 8px;
+            color: #9b4359;
+            font-size: 14px;
+        }
+
+        /* Formulário */
+        .campo {
+            margin-top: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+
+            font-weight: bold;
+            color: #5c3741;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+
+            border: 1px solid #e5a8b8;
+            border-radius: 10px;
+
+            font-size: 15px;
+            color: #5c3741;
+
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus {
+            border-color: #d96b87;
+            box-shadow: 0 0 0 3px rgba(217, 107, 135, 0.12);
+        }
+
+        input::placeholder {
+            color: #b58a95;
+        }
+
+        /* Botão */
+        button {
+            width: 100%;
+            margin-top: 25px;
+
+            padding: 14px;
+
+            border: none;
+            border-radius: 10px;
+
+            background: #d96b87;
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #c94f6d;
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            background: #d9a4b2;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Mensagem de erro */
+        #erro {
+            min-height: 20px;
+
+            margin-top: 16px;
+
+            text-align: center;
+
+            color: #b4233f;
+            font-size: 14px;
+        }
+
+        /* Link voltar */
+        .voltar {
+            display: block;
+
+            margin-top: 22px;
+
+            text-align: center;
+
+            color: #9b4359;
+            text-decoration: none;
+
+            font-size: 14px;
+        }
+
+        .voltar:hover {
+            text-decoration: underline;
+        }
+
+        /* Rodapé */
+        .rodape {
+            text-align: center;
+
+            margin-top: 25px;
+
+            color: #9b4359;
+            font-size: 12px;
+        }
+
+        /* Responsivo */
+        @media (max-width: 480px) {
+
+            body {
+                padding: 15px;
+            }
+
+            .login {
+                padding: 32px 24px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .logo .icone {
+                font-size: 36px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Elementos decorativos -->
+    <div class="fundo">
+        <div class="bolinha bolinha1"></div>
+        <div class="bolinha bolinha2"></div>
+        <div class="bolinha bolinha3"></div>
+    </div>
+
+    <!-- Login -->
+    <div class="login">
+
+        <div class="logo">
+            <div class="icone">✨</div>
+
+            <h1>Lash Designer</h1>
+
+            <div class="subtitulo">
+                Painel Administrativo 💗
+            </div>
+        </div>
+
+        <form id="formLogin">
+
+            <div class="campo">
+                <label for="email">E-mail</label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Digite seu e-mail"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="campo">
+                <label for="senha">Senha</label>
+
+                <input
+                    type="password"
+                    id="senha"
+                    placeholder="Digite sua senha"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <button type="submit" id="botaoEntrar">
+                Entrar
+            </button>
+
+            <div id="erro"></div>
+
+        </form>
+
+        <a href="index.html" class="voltar">
+            ← Voltar para a página inicial
+        </a>
+
+        <div class="rodape">
+            Lash Designer • Realçando sua beleza com delicadeza 💗
+        </div>
+
+    </div>
+
+    <script>
+
+        const formLogin = document.getElementById("formLogin");
+        const erro = document.getElementById("erro");
+        const botaoEntrar = document.getElementById("botaoEntrar");
+
+        formLogin.addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            const email = document.getElementById("email").value.trim();
+            const senha = document.getElementById("senha").value;
+
+            erro.textContent = "";
+
+            if (!email || !senha) {
+                erro.textContent = "Preencha e-mail e senha.";
+                return;
+            }
+
+            botaoEntrar.disabled = true;
+            botaoEntrar.textContent = "Entrando...";
+
+            firebase.auth()
+                .signInWithEmailAndPassword(email, senha)
+
+                .then(() => {
+
+                    window.location.href = "admin.html";
+
+                })
+
+                .catch((error) => {
+
+                    console.error("Erro ao fazer login:", error);
+
+                    switch (error.code) {
+
+                        case "auth/invalid-email":
+                            erro.textContent = "Digite um e-mail válido.";
+                            break;
+
+                        case "auth/user-not-found":
+                            erro.textContent = "Usuário não encontrado.";
+                            break;
+
+                        case "auth/wrong-password":
+                            erro.textContent = "Senha incorreta.";
+                            break;
+
+                        case "auth/invalid-credential":
+                            erro.textContent = "E-mail ou senha incorretos.";
+                            break;
+
+                        case "auth/too-many-requests":
+                            erro.textContent =
+                                "Muitas tentativas. Aguarde alguns minutos e tente novamente.";
+                            break;
+
+                        default:
+                            erro.textContent =
+                                "Não foi possível realizar o login. Tente novamente.";
+                    }
+
+                    botaoEntrar.disabled = false;
+                    botaoEntrar.textContent = "Entrar";
+                });
+        });
+
+    </script>
+
+</body>
+</html>
+```

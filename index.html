@@ -1,12 +1,18 @@
-<<<<<<< HEAD
-```html
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
     <title>Lash Designer | Agendamentos</title>
+
+    <!-- FIREBASE -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
 
     <style>
         * {
@@ -86,6 +92,11 @@
             background: #c65370;
         }
 
+        .botao:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
         section {
             padding: 45px 20px;
             max-width: 1000px;
@@ -100,7 +111,10 @@
 
         .servicos {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(220px, 1fr)
+            );
             gap: 20px;
         }
 
@@ -109,7 +123,8 @@
             padding: 25px;
             border-radius: 15px;
             text-align: center;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            box-shadow:
+                0 3px 10px rgba(0, 0, 0, 0.08);
         }
 
         .card h3 {
@@ -153,7 +168,8 @@
             background: white;
             padding: 25px;
             border-radius: 15px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            box-shadow:
+                0 3px 10px rgba(0, 0, 0, 0.08);
         }
 
         .mes {
@@ -209,11 +225,6 @@
             background: #eee;
             color: #999;
             cursor: not-allowed;
-        }
-
-        .dia.selecionado {
-            background: #d96b87;
-            color: white;
         }
 
         .vazio {
@@ -291,590 +302,1109 @@
 
 <body>
 
-<header>
-    <h1>✨ Lash Designer</h1>
-    <p>Realçando sua beleza com delicadeza 💗</p>
-</header>
+    <header>
+        <h1>✨ Lash Designer</h1>
+        <p>Realçando sua beleza com delicadeza 💗</p>
+    </header>
 
-<nav>
-    <a href="#inicio">Início</a>
-    <a href="#servicos">Serviços</a>
-    <a href="#calendario">Calendário</a>
-    <a href="#agendar">Agendar</a>
-    <a href="#agendamentos">Agendamentos</a>
-</nav>
+    <nav>
+        <a href="#inicio">Início</a>
+        <a href="#servicos">Serviços</a>
+        <a href="#calendario">Calendário</a>
+        <a href="#agendar">Agendar</a>
+        <a href="login.html">🔐 Admin</a>
+    </nav>
 
-<section class="inicio" id="inicio">
-    <h2>Seu olhar merece esse cuidado 💕</h2>
-    <p>
-        Alongamento de cílios com carinho, qualidade e um resultado incrível.
-    </p>
+    <section class="inicio" id="inicio">
+        <h2>Seu olhar merece esse cuidado 💕</h2>
 
-    <a href="#agendar" class="botao">
-        Agendar horário
-    </a>
-</section>
+        <p>
+            Alongamento de cílios com carinho,
+            qualidade e um resultado incrível.
+        </p>
 
-<section id="servicos">
-    <h2>✨ Nossos Serviços</h2>
+        <a href="#agendar" class="botao">
+            Agendar horário
+        </a>
+    </section>
 
-    <div class="servicos">
+    <section id="servicos">
 
-        <div class="card">
-            <h3>Fio a Fio</h3>
-            <p>Resultado delicado e natural.</p>
-            <p class="preco">R$ 100,00</p>
+        <h2>✨ Nossos Serviços</h2>
+
+        <div class="servicos">
+
+            <div class="card">
+                <h3>Fio a Fio</h3>
+
+                <p>
+                    Resultado delicado e natural.
+                </p>
+
+                <p class="preco">
+                    R$ 100,00
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Volume Brasileiro</h3>
+
+                <p>
+                    Mais volume e destaque para o olhar.
+                </p>
+
+                <p class="preco">
+                    R$ 120,00
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Volume Russo</h3>
+
+                <p>
+                    Um olhar marcante e sofisticado.
+                </p>
+
+                <p class="preco">
+                    R$ 140,00
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Manutenção</h3>
+
+                <p>
+                    Manutenção para conservar seus cílios.
+                </p>
+
+                <p class="preco">
+                    R$ 80,00
+                </p>
+            </div>
+
         </div>
+    </section>
 
-        <div class="card">
-            <h3>Volume Brasileiro</h3>
-            <p>Mais volume e destaque para o olhar.</p>
-            <p class="preco">R$ 120,00</p>
+    <section id="calendario">
+
+        <h2>📅 Calendário</h2>
+
+        <div class="calendario">
+
+            <div class="mes">
+
+                <button type="button"
+                    onclick="mesAnterior()">
+                    ❮
+                </button>
+
+                <span id="nomeMes"></span>
+
+                <button type="button"
+                    onclick="proximoMes()">
+                    ❯
+                </button>
+
+            </div>
+
+            <div
+                class="dias"
+                id="calendarioDias"
+            ></div>
+
+            <div class="legenda">
+
+                <p class="disponivel">
+                    🟢 Data disponível
+                </p>
+
+                <p class="indisp">
+                    ⚪ Data indisponível
+                </p>
+
+            </div>
+
         </div>
+    </section>
 
-        <div class="card">
-            <h3>Volume Russo</h3>
-            <p>Um olhar marcante e sofisticado.</p>
-            <p class="preco">R$ 140,00</p>
-        </div>
+    <section id="agendar">
 
-        <div class="card">
-            <h3>Manutenção</h3>
-            <p>Manutenção para conservar seus cílios.</p>
-            <p class="preco">R$ 80,00</p>
-        </div>
+        <h2>💗 Faça seu Agendamento</h2>
 
-    </div>
-</section>
+        <div class="agendamento">
 
-<section id="calendario">
-    <h2>📅 Calendário</h2>
+            <form id="formAgendamento">
 
-    <div class="calendario">
+                <div>
+                    <label for="nome">
+                        Nome:
+                    </label>
 
-        <div class="mes">
-            <button onclick="mesAnterior()">❮</button>
+                    <input
+                        type="text"
+                        id="nome"
+                        placeholder="Digite seu nome"
+                        required
+                    >
+                </div>
 
-            <span id="nomeMes"></span>
+                <div>
+                    <label for="telefone">
+                        Telefone:
+                    </label>
 
-            <button onclick="proximoMes()">❯</button>
-        </div>
+                    <input
+                        type="tel"
+                        id="telefone"
+                        placeholder="(00) 00000-0000"
+                        required
+                    >
+                </div>
 
-        <div class="dias" id="calendarioDias"></div>
+                <div>
+                    <label for="servico">
+                        Serviço:
+                    </label>
 
-        <div class="legenda">
-            <p class="disponivel">🟢 Data disponível</p>
-            <p class="indisp">⚪ Data indisponível</p>
-        </div>
+                    <select id="servico" required>
 
-    </div>
-</section>
+                        <option value="">
+                            Selecione um serviço
+                        </option>
 
-<section id="agendar">
+                        <option value="Fio a Fio - R$ 100,00">
+                            Fio a Fio - R$ 100,00
+                        </option>
 
-    <h2>💗 Faça seu Agendamento</h2>
+                        <option value="Volume Brasileiro - R$ 120,00">
+                            Volume Brasileiro - R$ 120,00
+                        </option>
 
-    <div class="agendamento">
+                        <option value="Volume Russo - R$ 140,00">
+                            Volume Russo - R$ 140,00
+                        </option>
 
-        <form id="formAgendamento">
+                        <option value="Manutenção - R$ 80,00">
+                            Manutenção - R$ 80,00
+                        </option>
 
-            <div>
-                <label>Nome:</label>
-                <input
-                    type="text"
-                    id="nome"
-                    placeholder="Digite seu nome"
-                    required
+                    </select>
+                </div>
+
+                <div>
+                    <label for="data">
+                        Data:
+                    </label>
+
+                    <input
+                        type="date"
+                        id="data"
+                        required
+                    >
+                </div>
+
+                <div>
+                    <label for="horario">
+                        Horário:
+                    </label>
+
+                    <select id="horario" required>
+
+                        <option value="">
+                            Selecione um horário
+                        </option>
+
+                        <option value="09:00">09:00</option>
+                        <option value="10:00">10:00</option>
+                        <option value="11:00">11:00</option>
+                        <option value="13:00">13:00</option>
+                        <option value="14:00">14:00</option>
+                        <option value="15:00">15:00</option>
+                        <option value="16:00">16:00</option>
+                        <option value="17:00">17:00</option>
+
+                    </select>
+                </div>
+
+                <button
+                    class="botao"
+                    id="btnAgendar"
+                    type="submit"
                 >
-            </div>
+                    Confirmar Agendamento 💕
+                </button>
 
-            <div>
-                <label>Telefone:</label>
-                <input
-                    type="tel"
-                    id="telefone"
-                    placeholder="(00) 00000-0000"
-                    required
-                >
-            </div>
+            </form>
+        </div>
+    </section>
 
-            <div>
-                <label>Serviço:</label>
+    <section id="agendamentos">
 
-                <select id="servico" required>
-                    <option value="">Selecione um serviço</option>
-                    <option>Fio a Fio - R$ 100,00</option>
-                    <option>Volume Brasileiro - R$ 120,00</option>
-                    <option>Volume Russo - R$ 140,00</option>
-                    <option>Manutenção - R$ 80,00</option>
-                </select>
-            </div>
+        <h2>📋 Agendamentos</h2>
 
-            <div>
-                <label>Data:</label>
+        <div id="listaAgendamentos">
+            <p>
+                Nenhum agendamento realizado.
+            </p>
+        </div>
 
-                <input
-                    type="date"
-                    id="data"
-                    required
-                >
-            </div>
+    </section>
 
-            <div>
-                <label>Horário:</label>
+    <footer>
 
-                <select id="horario" required>
-                    <option value="">Selecione um horário</option>
-                    <option>09:00</option>
-                    <option>10:00</option>
-                    <option>11:00</option>
-                    <option>13:00</option>
-                    <option>14:00</option>
-                    <option>15:00</option>
-                    <option>16:00</option>
-                    <option>17:00</option>
-                </select>
-            </div>
+        <p>© 2026 Lash Designer</p>
+        <p>Feito com 💗</p>
 
-            <button class="botao" type="submit">
-                Confirmar Agendamento 💕
-            </button>
+    </footer>
+        <script>
+        "use strict";
 
-        </form>
+        let dataAtual = new Date();
+        let agendamentos = [];
 
-    </div>
-</section>
-
-<section id="agendamentos">
-
-    <h2>📋 Agendamentos</h2>
-
-    <div id="listaAgendamentos">
-        <p>Nenhum agendamento realizado.</p>
-    </div>
-
-</section>
-
-<footer>
-    <p>© 2026 Lash Designer</p>
-    <p>Feito com 💗</p>
-</footer>
-
-<script>
-
-    let dataAtual = new Date();
-
-    let agendamentos =
-        JSON.parse(localStorage.getItem("agendamentos")) || [];
-
-    const nomesMeses = [
-        "Janeiro",
-        "Fevereiro",
-        "Março",
-        "Abril",
-        "Maio",
-        "Junho",
-        "Julho",
-        "Agosto",
-        "Setembro",
-        "Outubro",
-        "Novembro",
-        "Dezembro"
-    ];
-
-    function criarCalendario() {
-
-        const ano = dataAtual.getFullYear();
-        const mes = dataAtual.getMonth();
-
-        document.getElementById("nomeMes").textContent =
-            nomesMeses[mes] + " " + ano;
-
-        const calendario =
-            document.getElementById("calendarioDias");
-
-        calendario.innerHTML = "";
-
-        const semana = [
-            "Dom",
-            "Seg",
-            "Ter",
-            "Qua",
-            "Qui",
-            "Sex",
-            "Sáb"
+        const nomesMeses = [
+            "Janeiro",
+            "Fevereiro",
+            "Março",
+            "Abril",
+            "Maio",
+            "Junho",
+            "Julho",
+            "Agosto",
+            "Setembro",
+            "Outubro",
+            "Novembro",
+            "Dezembro"
         ];
 
-        semana.forEach(dia => {
+        const horariosDisponiveis = [
+            "09:00",
+            "10:00",
+            "11:00",
+            "13:00",
+            "14:00",
+            "15:00",
+            "16:00",
+            "17:00"
+        ];
 
-            const elemento = document.createElement("div");
-
-            elemento.className = "diaSemana";
-            elemento.textContent = dia;
-
-            calendario.appendChild(elemento);
-
-        });
-
-        const primeiroDia =
-            new Date(ano, mes, 1).getDay();
-
-        const quantidadeDias =
-            new Date(ano, mes + 1, 0).getDate();
-
-        for (let i = 0; i < primeiroDia; i++) {
-
-            const vazio =
-                document.createElement("div");
-
-            vazio.className = "vazio";
-
-            calendario.appendChild(vazio);
-        }
-
-        for (let dia = 1; dia <= quantidadeDias; dia++) {
-
-            const botao =
-                document.createElement("button");
-
-            botao.className = "dia";
-
-            botao.textContent = dia;
-
-            const dataFormatada =
-                ano + "-" +
-                String(mes + 1).padStart(2, "0") + "-" +
-                String(dia).padStart(2, "0");
-
+        function hojeFormatado() {
             const hoje = new Date();
 
-            hoje.setHours(0, 0, 0, 0);
+            const ano = hoje.getFullYear();
 
-            const dataDia =
-                new Date(ano, mes, dia);
+            const mes = String(
+                hoje.getMonth() + 1
+            ).padStart(2, "0");
 
-            // Dias anteriores ficam indisponíveis
-            if (dataDia < hoje) {
+            const dia = String(
+                hoje.getDate()
+            ).padStart(2, "0");
 
-                botao.classList.add("indisponivel");
-                botao.disabled = true;
+            return `${ano}-${mes}-${dia}`;
+        }
 
-            } else {
+        function firebasePronto() {
 
-                // Verifica se já existem 8 agendamentos
-                // para aquela data
+            if (typeof firebase === "undefined") {
+                console.error(
+                    "Firebase não foi carregado."
+                );
+
+                return false;
+            }
+
+            if (
+                typeof db === "undefined" ||
+                !db
+            ) {
+                console.error(
+                    "A variável 'db' não foi encontrada. " +
+                    "Verifique o arquivo js/firebase-config.js."
+                );
+
+                return false;
+            }
+
+            return true;
+        }
+
+        async function carregarAgendamentos() {
+
+            if (!firebasePronto()) {
+                mostrarErroFirebase();
+                return;
+            }
+
+            try {
+
+                const resultado = await db
+                    .collection("agendamentos")
+                    .get();
+
+                agendamentos = [];
+
+                resultado.forEach(function (doc) {
+
+                    agendamentos.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+
+                });
+
+                agendamentos.sort(
+                    function (a, b) {
+
+                        const dataA =
+                            `${a.data || ""} ${a.horario || ""}`;
+
+                        const dataB =
+                            `${b.data || ""} ${b.horario || ""}`;
+
+                        return dataA.localeCompare(dataB);
+                    }
+                );
+
+                mostrarAgendamentos();
+
+                criarCalendario();
+
+                atualizarHorarios();
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro ao carregar agendamentos:",
+                    erro
+                );
+
+                mostrarErroFirebase();
+            }
+        }
+
+        function mostrarErroFirebase() {
+
+            const lista =
+                document.getElementById(
+                    "listaAgendamentos"
+                );
+
+            if (lista) {
+
+                lista.innerHTML =
+                    "<p>" +
+                    "Não foi possível carregar os agendamentos. " +
+                    "Verifique a configuração do Firebase." +
+                    "</p>";
+            }
+        }
+
+        function criarCalendario() {
+
+            const ano =
+                dataAtual.getFullYear();
+
+            const mes =
+                dataAtual.getMonth();
+
+            document.getElementById(
+                "nomeMes"
+            ).textContent =
+                `${nomesMeses[mes]} ${ano}`;
+
+            const calendario =
+                document.getElementById(
+                    "calendarioDias"
+                );
+
+            calendario.innerHTML = "";
+
+            const semana = [
+                "Dom",
+                "Seg",
+                "Ter",
+                "Qua",
+                "Qui",
+                "Sex",
+                "Sáb"
+            ];
+
+            semana.forEach(function (dia) {
+
+                const elemento =
+                    document.createElement("div");
+
+                elemento.className =
+                    "diaSemana";
+
+                elemento.textContent =
+                    dia;
+
+                calendario.appendChild(
+                    elemento
+                );
+            });
+
+            const primeiroDia =
+                new Date(
+                    ano,
+                    mes,
+                    1
+                ).getDay();
+
+            const quantidadeDias =
+                new Date(
+                    ano,
+                    mes + 1,
+                    0
+                ).getDate();
+
+            const hoje =
+                hojeFormatado();
+
+            for (
+                let i = 0;
+                i < primeiroDia;
+                i++
+            ) {
+
+                const vazio =
+                    document.createElement("div");
+
+                vazio.className =
+                    "vazio";
+
+                calendario.appendChild(
+                    vazio
+                );
+            }
+
+            for (
+                let dia = 1;
+                dia <= quantidadeDias;
+                dia++
+            ) {
+
+                const botao =
+                    document.createElement("button");
+
+                botao.type = "button";
+
+                botao.className =
+                    "dia";
+
+                botao.textContent =
+                    dia;
+
+                const dataFormatada =
+                    `${ano}-${String(
+                        mes + 1
+                    ).padStart(2, "0")}-${String(
+                        dia
+                    ).padStart(2, "0")}`;
+
                 const quantidade =
                     agendamentos.filter(
-                        a => a.data === dataFormatada
+                        function (a) {
+                            return (
+                                a.data ===
+                                dataFormatada
+                            );
+                        }
                     ).length;
 
-                if (quantidade >= 8) {
+                if (
+                    dataFormatada < hoje ||
+                    quantidade >=
+                    horariosDisponiveis.length
+                ) {
 
-                    botao.classList.add("indisponivel");
+                    botao.classList.add(
+                        "indisponivel"
+                    );
+
                     botao.disabled = true;
+
+                    botao.title =
+                        dataFormatada < hoje
+                            ? "Data passada"
+                            : "Não há horários disponíveis";
 
                 } else {
 
-                    botao.onclick = function() {
+                    botao.title =
+                        `${horariosDisponiveis.length - quantidade}` +
+                        " horário(s) disponível(is)";
 
-                        document.getElementById("data").value =
-                            dataFormatada;
+                    botao.addEventListener(
+                        "click",
+                        function () {
 
-                        document
-                            .getElementById("agendar")
-                            .scrollIntoView({
-                                behavior: "smooth"
-                            });
+                            const campoData =
+                                document.getElementById(
+                                    "data"
+                                );
 
-                    };
+                            campoData.value =
+                                dataFormatada;
 
+                            atualizarHorarios();
+
+                            document
+                                .getElementById(
+                                    "agendar"
+                                )
+                                .scrollIntoView({
+                                    behavior: "smooth"
+                                });
+                        }
+                    );
                 }
 
+                calendario.appendChild(
+                    botao
+                );
             }
-
-            calendario.appendChild(botao);
         }
-    }
 
-    function mesAnterior() {
+        function mesAnterior() {
 
-        dataAtual.setMonth(
-            dataAtual.getMonth() - 1
-        );
+            dataAtual.setMonth(
+                dataAtual.getMonth() - 1
+            );
 
-        criarCalendario();
-    }
+            criarCalendario();
+        }
 
-    function proximoMes() {
+        function proximoMes() {
 
-        dataAtual.setMonth(
-            dataAtual.getMonth() + 1
-        );
+            dataAtual.setMonth(
+                dataAtual.getMonth() + 1
+            );
 
-        criarCalendario();
-    }
+            criarCalendario();
+        }
 
-    document
-        .getElementById("formAgendamento")
-        .addEventListener("submit", function(event) {
+        function atualizarHorarios() {
 
-            event.preventDefault();
-
-            const nome =
-                document.getElementById("nome").value;
-
-            const telefone =
-                document.getElementById("telefone").value;
-
-            const servico =
-                document.getElementById("servico").value;
-
-            const data =
-                document.getElementById("data").value;
-
-            const horario =
-                document.getElementById("horario").value;
-
-            // Verifica se o horário já está ocupado
-            const horarioOcupado =
-                agendamentos.some(
-                    a =>
-                        a.data === data &&
-                        a.horario === horario
+            const select =
+                document.getElementById(
+                    "horario"
                 );
 
-            if (horarioOcupado) {
+            const data =
+                document.getElementById(
+                    "data"
+                ).value;
+
+            if (!select) return;
+
+            const horarioSelecionado =
+                select.value;
+
+            select.innerHTML = "";
+
+            const opcaoPadrao =
+                document.createElement("option");
+
+            opcaoPadrao.value = "";
+
+            opcaoPadrao.textContent =
+                "Selecione um horário";
+
+            select.appendChild(
+                opcaoPadrao
+            );
+
+            horariosDisponiveis.forEach(
+                function (horario) {
+
+                    const ocupado =
+                        agendamentos.some(
+                            function (a) {
+
+                                return (
+                                    a.data === data &&
+                                    a.horario === horario
+                                );
+                            }
+                        );
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+                    option.value =
+                        horario;
+
+                    option.textContent =
+                        ocupado
+                            ? `${horario} — ocupado`
+                            : horario;
+
+                    option.disabled =
+                        ocupado;
+
+                    select.appendChild(
+                        option
+                    );
+                }
+            );
+
+            if (
+                horarioSelecionado &&
+                !agendamentos.some(
+                    function (a) {
+
+                        return (
+                            a.data === data &&
+                            a.horario ===
+                            horarioSelecionado
+                        );
+                    }
+                )
+            ) {
+
+                select.value =
+                    horarioSelecionado;
+            }
+        }
+
+        document
+            .getElementById("data")
+            .setAttribute(
+                "min",
+                hojeFormatado()
+            );
+
+        document
+            .getElementById("data")
+            .addEventListener(
+                "change",
+                function () {
+
+                    atualizarHorarios();
+                }
+            );
+
+        document
+            .getElementById("formAgendamento")
+            .addEventListener(
+                "submit",
+                async function (event) {
+
+                    event.preventDefault();
+
+                    const nome =
+                        document
+                            .getElementById("nome")
+                            .value
+                            .trim();
+
+                    const telefone =
+                        document
+                            .getElementById("telefone")
+                            .value
+                            .trim();
+
+                    const servico =
+                        document
+                            .getElementById("servico")
+                            .value;
+
+                    const data =
+                        document
+                            .getElementById("data")
+                            .value;
+
+                    const horario =
+                        document
+                            .getElementById("horario")
+                            .value;
+
+                    const botao =
+                        document.getElementById(
+                            "btnAgendar"
+                        );
+
+                    if (
+                        !nome ||
+                        !telefone ||
+                        !servico ||
+                        !data ||
+                        !horario
+                    ) {
+
+                        alert(
+                            "Preencha todos os campos."
+                        );
+
+                        return;
+                    }
+
+                    if (
+                        data < hojeFormatado()
+                    ) {
+
+                        alert(
+                            "Não é possível agendar " +
+                            "uma data que já passou."
+                        );
+
+                        return;
+                    }
+
+                    if (!firebasePronto()) {
+
+                        alert(
+                            "O Firebase não está configurado " +
+                            "corretamente. Verifique o arquivo " +
+                            "js/firebase-config.js."
+                        );
+
+                        return;
+                    }
+
+                    botao.disabled = true;
+
+                    botao.textContent =
+                        "Agendando...";
+
+                    try {
+
+                        const consulta =
+                            await db
+                                .collection(
+                                    "agendamentos"
+                                )
+                                .where(
+                                    "data",
+                                    "==",
+                                    data
+                                )
+                                .get();
+
+                        const agendamentosDoDia =
+                            [];
+
+                        consulta.forEach(
+                            function (doc) {
+
+                                agendamentosDoDia.push({
+                                    id: doc.id,
+                                    ...doc.data()
+                                });
+
+                            }
+                        );
+
+                        const horarioOcupado =
+                            agendamentosDoDia.some(
+                                function (a) {
+
+                                    return (
+                                        a.horario ===
+                                        horario
+                                    );
+                                }
+                            );
+
+                        if (horarioOcupado) {
+
+                            alert(
+                                "Esse horário já está ocupado. " +
+                                "Escolha outro horário."
+                            );
+
+                            await carregarAgendamentos();
+
+                            return;
+                        }
+
+                        if (
+                            agendamentosDoDia.length >=
+                            horariosDisponiveis.length
+                        ) {
+
+                            alert(
+                                "Esse dia já está lotado. " +
+                                "Escolha outra data."
+                            );
+
+                            await carregarAgendamentos();
+
+                            return;
+                        }
+
+                        await db
+                            .collection(
+                                "agendamentos"
+                            )
+                            .add({
+
+                                nome: nome,
+
+                                telefone: telefone,
+
+                                servico: servico,
+
+                                data: data,
+
+                                horario: horario,
+
+                                criadoEm:
+                                    firebase
+                                        .firestore
+                                        .FieldValue
+                                        .serverTimestamp()
+                            });
+
+                        alert(
+                            "Agendamento realizado " +
+                            "com sucesso! 💗"
+                        );
+
+                        document
+                            .getElementById(
+                                "formAgendamento"
+                            )
+                            .reset();
+
+                        document
+                            .getElementById(
+                                "data"
+                            )
+                            .setAttribute(
+                                "min",
+                                hojeFormatado()
+                            );
+
+                        await carregarAgendamentos();
+
+                    } catch (erro) {
+
+                        console.error(
+                            "Erro ao salvar agendamento:",
+                            erro
+                        );
+
+                        alert(
+                            "Não foi possível realizar o " +
+                            "agendamento. Verifique a " +
+                            "configuração e as regras do Firebase."
+                        );
+
+                    } finally {
+
+                        botao.disabled = false;
+
+                        botao.textContent =
+                            "Confirmar Agendamento 💕";
+
+                        atualizarHorarios();
+                    }
+                }
+            );
+
+        function mostrarAgendamentos() {
+
+            const lista =
+                document.getElementById(
+                    "listaAgendamentos"
+                );
+
+            if (!lista) return;
+
+            lista.innerHTML = "";
+
+            if (
+                agendamentos.length === 0
+            ) {
+
+                lista.innerHTML =
+                    "<p>Nenhum agendamento realizado.</p>";
+
+                return;
+            }
+
+            agendamentos.forEach(
+                function (agendamento) {
+
+                    const card =
+                        document.createElement(
+                            "div"
+                        );
+
+                    card.className =
+                        "agendamento-card";
+
+                    const partesData =
+                        agendamento.data
+                            ? agendamento.data.split("-")
+                            : [];
+
+                    const dataBrasileira =
+                        partesData.length === 3
+                            ? `${partesData[2]}/${partesData[1]}/${partesData[0]}`
+                            : (
+                                agendamento.data ||
+                                ""
+                            );
+
+                    card.innerHTML = `
+
+                        <strong>
+                            ${escaparHTML(
+                                agendamento.nome
+                            )}
+                        </strong>
+
+                        <p>
+                            📞
+                            ${escaparHTML(
+                                agendamento.telefone
+                            )}
+                        </p>
+
+                        <p>
+                            👁️
+                            ${escaparHTML(
+                                agendamento.servico
+                            )}
+                        </p>
+
+                        <p>
+                            📅
+                            ${escaparHTML(
+                                dataBrasileira
+                            )}
+                        </p>
+
+                        <p>
+                            ⏰
+                            ${escaparHTML(
+                                agendamento.horario
+                            )}
+                        </p>
+
+                        <button
+                            class="excluir"
+                            type="button"
+                        >
+                            Cancelar
+                        </button>
+                    `;
+
+                    const botaoExcluir =
+                        card.querySelector(
+                            ".excluir"
+                        );
+
+                    botaoExcluir.addEventListener(
+                        "click",
+                        function () {
+
+                            excluirAgendamento(
+                                agendamento.id
+                            );
+                        }
+                    );
+
+                    lista.appendChild(
+                        card
+                    );
+                }
+            );
+        }
+
+        function escaparHTML(valor) {
+
+            return String(
+                valor || ""
+            ).replace(
+                /[&<>"']/g,
+                function (caractere) {
+
+                    return {
+                        "&": "&amp;",
+                        "<": "&lt;",
+                        ">": "&gt;",
+                        '"': "&quot;",
+                        "'": "&#039;"
+                    }[caractere];
+                }
+            );
+        }
+
+        async function excluirAgendamento(id) {
+
+            if (
+                !id ||
+                !firebasePronto()
+            ) {
 
                 alert(
-                    "Esse horário já está ocupado. Escolha outro horário."
+                    "Não foi possível cancelar " +
+                    "o agendamento."
                 );
 
                 return;
             }
 
-            const novoAgendamento = {
+            if (
+                !confirm(
+                    "Deseja cancelar este agendamento?"
+                )
+            ) {
 
-                nome,
-                telefone,
-                servico,
-                data,
-                horario
-
-            };
-
-            agendamentos.push(novoAgendamento);
-
-            localStorage.setItem(
-                "agendamentos",
-                JSON.stringify(agendamentos)
-            );
-
-            alert(
-                "Agendamento realizado com sucesso! 💗"
-            );
-
-            document
-                .getElementById("formAgendamento")
-                .reset();
-
-            mostrarAgendamentos();
-
-            criarCalendario();
-
-        });
-
-    function mostrarAgendamentos() {
-
-        const lista =
-            document.getElementById("listaAgendamentos");
-
-        lista.innerHTML = "";
-
-        if (agendamentos.length === 0) {
-
-            lista.innerHTML =
-                "<p>Nenhum agendamento realizado.</p>";
-
-            return;
-        }
-
-        agendamentos.forEach(
-            (agendamento, index) => {
-
-                const card =
-                    document.createElement("div");
-
-                card.className =
-                    "agendamento-card";
-
-                const data =
-                    agendamento.data.split("-");
-
-                const dataBrasileira =
-                    data[2] + "/" +
-                    data[1] + "/" +
-                    data[0];
-
-                card.innerHTML = `
-
-                    <strong>${agendamento.nome}</strong>
-
-                    <p>📞 ${agendamento.telefone}</p>
-
-                    <p>👁️ ${agendamento.servico}</p>
-
-                    <p>📅 ${dataBrasileira}</p>
-
-                    <p>⏰ ${agendamento.horario}</p>
-
-                    <button
-                        class="excluir"
-                        onclick="excluirAgendamento(${index})">
-                        Cancelar
-                    </button>
-
-                `;
-
-                lista.appendChild(card);
-
+                return;
             }
-        );
-    }
 
-    function excluirAgendamento(index) {
+            try {
 
-        if (
-            confirm(
-                "Deseja cancelar este agendamento?"
-            )
-        ) {
+                await db
+                    .collection(
+                        "agendamentos"
+                    )
+                    .doc(id)
+                    .delete();
 
-            agendamentos.splice(index, 1);
+                alert(
+                    "Agendamento cancelado com sucesso."
+                );
 
-            localStorage.setItem(
-                "agendamentos",
-                JSON.stringify(agendamentos)
+                await carregarAgendamentos();
+
+            } catch (erro) {
+
+                console.error(
+                    "Erro ao excluir:",
+                    erro
+                );
+
+                alert(
+                    "Não foi possível cancelar o " +
+                    "agendamento. Verifique as regras " +
+                    "do Firebase."
+                );
+            }
+        }
+
+        document
+            .getElementById("data")
+            .setAttribute(
+                "min",
+                hojeFormatado()
             );
 
-            mostrarAgendamentos();
+        criarCalendario();
 
-            criarCalendario();
-        }
-    }
+        atualizarHorarios();
 
-    criarCalendario();
-
-    mostrarAgendamentos();
-
-</script>
+        carregarAgendamentos();
+    </script>
 
 </body>
 </html>
-```
-=======
-
-<!DOCTYPE html>
-
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8"/>
-<title>Loja Online - Corrigido</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-<script src="js/firebase-config.js"></script>
-<script defer="" src="js/main.js"></script>
-<style>
-.card {
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-}
-</style></head>
-<body class="bg-light">
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-<div class="container d-flex justify-content-between align-items-center">
-<a class="navbar-brand" href="https://professorjacksonmarques.github.io/firebase/index.html">🛍️ Loja Online</a>
-<div>
-<button class="btn btn-outline-secondary me-2 d-none" id="btn-admin" onclick="window.location.href='admin.html'">Admin</button>
-<button class="btn btn-outline-primary me-2" id="btn-login" onclick="abrirLogin()">Entrar</button>
-<button class="btn btn-outline-secondary d-none" id="btn-logout" onclick="logout()">Sair</button>
-</div>
-</div>
-</nav>
-<!-- Modo escuro -->
-<div class="form-check form-switch text-end me-3 mt-2">
-<input class="form-check-input" id="modoEscuroToggle" onchange="alternarModoEscuro()" type="checkbox"/>
-<label class="form-check-label" for="modoEscuroToggle">Modo escuro</label>
-</div>
-<script>
-    function alternarModoEscuro() {
-      document.body.classList.toggle('bg-dark');
-      document.body.classList.toggle('text-light');
-      document.querySelectorAll('.card').forEach(card => card.classList.toggle('bg-secondary'));
-    }
-  </script>
-<div class="container mt-4">
-<!-- Filtros -->
-<div class="row mb-4">
-<div class="col-md-4">
-<input class="form-control" id="busca" placeholder="Buscar por nome" type="text"/>
-</div>
-<div class="col-md-3">
-<input class="form-control" id="precoMin" placeholder="Preço mínimo" type="number"/>
-</div>
-<div class="col-md-3">
-<input class="form-control" id="precoMax" placeholder="Preço máximo" type="number"/>
-</div>
-<div class="col-md-2">
-<button class="btn btn-primary w-100" onclick="aplicarFiltros()">Filtrar</button>
-</div>
-</div>
-<!-- Produtos -->
-<div class="row mb-5 row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4" id="produtos"></div>
-<!-- Carrinho -->
-<h2 class="mt-5">🛒 Meu Carrinho</h2>
-<ul class="list-group mb-3" id="carrinho"></ul>
-<button class="btn btn-success mb-5" onclick="finalizarCompra()">Finalizar Compra</button>
-</div>
-<!-- Modal de login/cadastro -->
-<div class="modal fade" id="loginModal" tabindex="-1">
-<div class="modal-dialog">
-<div class="modal-content">
-<div class="modal-header">
-<h5 class="modal-title">Acesso ao Sistema</h5>
-<button class="btn-close" data-bs-dismiss="modal" type="button"></button>
-</div>
-<div class="modal-body">
-<input class="form-control mb-2" id="email" placeholder="Email" type="email"/>
-<input class="form-control mb-3" id="senha" placeholder="Senha" type="password"/>
-<button class="btn btn-primary w-100 mb-2" onclick="login()">Entrar</button>
-<hr/>
-<input class="form-control mb-2" id="emailCadastro" placeholder="Novo Email" type="email"/>
-<input class="form-control mb-2" id="senhaCadastro" placeholder="Nova Senha" type="password"/>
-<button class="btn btn-success w-100" onclick="cadastrar()">Cadastrar</button>
-</div>
-</div>
-</div>
-</div>
-<!-- Scripts finais -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-      carregarProdutos();
-    });
-  </script>
-<!-- Rodapé -->
-<footer class="bg-dark text-light py-4 mt-5">
-<div class="container text-center">
-<p class="mb-1">© 2025 Loja Online - Todos os direitos reservados.</p>
-<p class="mb-0"><small>Desenvolvido com ♥ usando Firebase &amp; Bootstrap</small></p>
-</div>
-</footer>
-</body>
-</html>
->>>>>>> c771f138dcbf5fe8aae1a70976961149095d97db

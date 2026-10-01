@@ -2,59 +2,2054 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Painel Admin</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Painel Administrativo | Lash Designer</title>
+
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+
+  <!-- Configuração Firebase -->
   <script src="js/firebase-config.js"></script>
-  <script src="js/admin.js" defer></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #fff7fa;
+      color: #5c3741;
+    }
+
+    /* =========================
+       CABEÇALHO
+    ========================= */
+
+    header {
+      background: #f3a6b8;
+      padding: 25px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 2px 8px rgba(92, 55, 65, 0.12);
+    }
+
+    .logo-area h1 {
+      margin: 0;
+      color: #ffffff;
+      font-size: 27px;
+    }
+
+    .logo-area p {
+      margin: 6px 0 0;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    .botao-sair {
+      border: none;
+      background: #9b4359;
+      color: white;
+      padding: 11px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .botao-sair:hover {
+      background: #7f3448;
+      transform: translateY(-1px);
+    }
+
+    /* =========================
+       MENU
+    ========================= */
+
+    nav {
+      background: #ffdce5;
+      padding: 12px 20px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      box-shadow: 0 2px 5px rgba(92, 55, 65, 0.08);
+    }
+
+    nav button {
+      border: none;
+      background: transparent;
+      color: #9b4359;
+      padding: 10px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    nav button:hover,
+    nav button.ativo {
+      background: #ffffff;
+    }
+
+    /* =========================
+       CONTEÚDO
+    ========================= */
+
+    main {
+      max-width: 1150px;
+      margin: 30px auto;
+      padding: 0 20px 40px;
+    }
+
+    .titulo-pagina {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .titulo-pagina h2 {
+      color: #c94f6d;
+      margin-bottom: 8px;
+    }
+
+    .titulo-pagina p {
+      margin: 0;
+    }
+
+    /* =========================
+       MENSAGENS
+    ========================= */
+
+    #mensagem {
+      padding: 13px 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: none;
+      font-weight: bold;
+    }
+
+    #mensagem.sucesso {
+      background: #d9f5dc;
+      color: #35643d;
+    }
+
+    #mensagem.erro {
+      background: #f8d7da;
+      color: #842029;
+    }
+
+    #mensagem.info {
+      background: #ffe9ef;
+      color: #9b4359;
+    }
+
+    /* =========================
+       RESUMO
+    ========================= */
+
+    .resumo {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+
+    .card-resumo {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 22px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(92, 55, 65, 0.10);
+      border-top: 4px solid #f3a6b8;
+    }
+
+    .card-resumo .icone {
+      font-size: 30px;
+    }
+
+    .card-resumo h3 {
+      margin: 8px 0 4px;
+      color: #c94f6d;
+      font-size: 30px;
+    }
+
+    .card-resumo p {
+      margin: 0;
+    }
+
+    /* =========================
+       SEÇÕES
+    ========================= */
+
+    .secao {
+      display: none;
+    }
+
+    .secao.ativa {
+      display: block;
+    }
+
+    .cabecalho-secao {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .cabecalho-secao h2 {
+      color: #c94f6d;
+      margin: 0;
+    }
+
+    /* =========================
+       BOTÕES
+    ========================= */
+
+    .botao {
+      border: none;
+      background: #d96b87;
+      color: white;
+      padding: 11px 18px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .botao:hover {
+      background: #c95775;
+    }
+
+    .botao-secundario {
+      background: #ffdce5;
+      color: #9b4359;
+    }
+
+    .botao-secundario:hover {
+      background: #f8c9d5;
+    }
+
+    .botao-editar {
+      background: #dca04d;
+      color: white;
+    }
+
+    .botao-excluir {
+      background: #c94f5f;
+      color: white;
+    }
+
+    .botao-pequeno {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      margin-right: 5px;
+      margin-top: 5px;
+    }
+
+    /* =========================
+       CARDS
+    ========================= */
+
+    .lista {
+      display: grid;
+      gap: 15px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(92, 55, 65, 0.10);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      color: #c94f6d;
+    }
+
+    .card p {
+      margin: 7px 0;
+    }
+
+    .card strong {
+      color: #9b4359;
+    }
+
+    .vazio {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(92, 55, 65, 0.08);
+    }
+
+    /* =========================
+       FORMULÁRIOS
+    ========================= */
+
+    .formulario {
+      background: #ffe9ef;
+      padding: 22px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      display: none;
+    }
+
+    .formulario.ativo {
+      display: block;
+    }
+
+    .grupo {
+      margin-bottom: 15px;
+    }
+
+    .grupo label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    .grupo input,
+    .grupo select,
+    .grupo textarea {
+      width: 100%;
+      padding: 11px;
+      border: 1px solid #e5a8b8;
+      border-radius: 8px;
+      font-size: 15px;
+      color: #5c3741;
+      background: #ffffff;
+    }
+
+    .grupo textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .botoes-formulario {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* =========================
+       SERVIÇOS
+    ========================= */
+
+    .grade-servicos {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .servico-card {
+      background: #ffffff;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(92, 55, 65, 0.10);
+    }
+
+    .servico-card h3 {
+      color: #c94f6d;
+      margin-top: 0;
+    }
+
+    .preco {
+      color: #a73f58;
+      font-weight: bold;
+      font-size: 20px;
+    }
+
+    /* =========================
+       PORTFÓLIO
+    ========================= */
+
+    .grade-portfolio {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .portfolio-card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(92, 55, 65, 0.10);
+    }
+
+    .portfolio-card img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .portfolio-info {
+      padding: 15px;
+    }
+
+    .portfolio-info h3 {
+      margin-top: 0;
+      color: #c94f6d;
+    }
+
+    /* =========================
+       USUÁRIOS
+    ========================= */
+
+    .usuario {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 15px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .badge-admin {
+      background: #d9f5dc;
+      color: #35643d;
+    }
+
+    .badge-cliente {
+      background: #ffe9ef;
+      color: #9b4359;
+    }
+
+    /* =========================
+       RODAPÉ
+    ========================= */
+
+    footer {
+      background: #f3a6b8;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 30px;
+    }
+
+    /* =========================
+       RESPONSIVO
+    ========================= */
+
+    @media (max-width: 800px) {
+      .resumo {
+        grid-template-columns: 1fr;
+      }
+
+      .grade-servicos {
+        grid-template-columns: 1fr;
+      }
+
+      .grade-portfolio {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding: 20px;
+        flex-direction: column;
+        text-align: center;
+      }
+
+      nav {
+        justify-content: flex-start;
+        overflow-x: auto;
+      }
+
+      main {
+        margin-top: 20px;
+      }
+
+      .grade-portfolio {
+        grid-template-columns: 1fr;
+      }
+
+      .portfolio-card img {
+        height: 250px;
+      }
+    }
+  </style>
 </head>
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-<div class="container d-flex justify-content-between align-items-center">
-<a class="navbar-brand" href="https://professorjacksonmarques.github.io/firebase/index.html">🛍️ Loja Online</a>
-<div>
-<button class="btn btn-outline-secondary me-2 d-none" id="btn-admin" onclick="window.location.href='admin.html'">Admin</button>
-<button class="btn btn-outline-primary me-2" id="btn-login" onclick="abrirLogin()">Entrar</button>
-<button class="btn btn-outline-secondary d-none" id="btn-logout" onclick="logout()">Sair</button>
-</div>
-</div>
-</nav>
-<body class="bg-light">
-  <div class="container mt-4">
-    <h2>Painel Administrativo</h2>
-    <div id="mensagem" class="alert alert-info d-none"></div>
-    <button class="btn btn-primary my-3" onclick="mostrarFormulario()">Adicionar Produto</button>
-    <div id="form-produto" class="mb-4 d-none">
-      <input type="text" id="nome" class="form-control mb-2" placeholder="Nome do produto">
-      <input type="number" id="preco" class="form-control mb-2" placeholder="Preço">
-      <input type="number" id="estoque" class="form-control mb-2" placeholder="Estoque">
 
-      <select id="tipoImagem" class="form-select mb-2" onchange="alternarEntradaImagem()">
-        <option value="url">Imagem por link (URL)</option>
-        <option value="arquivo">Imagem do computador</option>
-      </select>
+<body>
 
-      <input type="text" id="imagemURL" class="form-control mb-2" placeholder="Cole o link da imagem">
-      <input type="file" id="imagemArquivo" class="form-control mb-2 d-none">
-
-      <input type="hidden" id="id-produto">
-      <button class="btn btn-success" onclick="salvarProduto()">Salvar</button>
-      <button class="btn btn-secondary" onclick="cancelarFormulario()">Cancelar</button>
-    </div>
-    <div id="lista-produtos" class="row"></div>
-
-    <h3 class="mt-5">Gerenciar Usuários</h3>
-    <ul id="lista-usuarios" class="list-group mb-5"></ul>
+<header>
+  <div class="logo-area">
+    <h1>✨ Lash Designer</h1>
+    <p>Painel Administrativo 💗</p>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <footer class="bg-dark text-light py-4 mt-5">
-    <div class="container text-center">
-      <p class="mb-1">© 2025 Loja Online - Todos os direitos reservados.</p>
-      <p class="mb-0"><small>Desenvolvido com ♥ usando Firebase & Bootstrap</small></p>
+  <button class="botao-sair" onclick="sair()">🚪 Sair</button>
+</header>
+
+<nav>
+  <button class="ativo" onclick="mostrarSecao('inicio', this)">🏠 Início</button>
+  <button onclick="mostrarSecao('agendamentos', this)">📅 Agendamentos</button>
+  <button onclick="mostrarSecao('clientes', this)">👥 Clientes</button>
+  <button onclick="mostrarSecao('servicos', this)">💕 Serviços</button>
+  <button onclick="mostrarSecao('portfolio', this)">📸 Portfólio</button>
+  <button onclick="mostrarSecao('usuarios', this)">👤 Usuários</button>
+</nav>
+
+<main>
+
+  <div id="mensagem"></div>
+
+  <div id="carregando" class="vazio">
+    🔐 Verificando acesso...
+  </div>
+
+  <!-- =========================
+       INÍCIO
+  ========================= -->
+
+  <section id="secao-inicio" class="secao ativa">
+
+    <div class="titulo-pagina">
+      <h2>Bem-vinda ao Painel Administrativo 💗</h2>
+      <p>Gerencie os agendamentos e informações do seu Lash Designer.</p>
     </div>
-  </footer>
+
+    <div class="resumo">
+
+      <div class="card-resumo">
+        <div class="icone">📅</div>
+        <h3 id="totalAgendamentos">0</h3>
+        <p>Agendamentos</p>
+      </div>
+
+      <div class="card-resumo">
+        <div class="icone">👥</div>
+        <h3 id="totalClientes">0</h3>
+        <p>Clientes</p>
+      </div>
+
+      <div class="card-resumo">
+        <div class="icone">💕</div>
+        <h3 id="totalServicos">0</h3>
+        <p>Serviços</p>
+      </div>
+
+    </div>
+
+    <div class="card">
+      <h3>✨ Acesso rápido</h3>
+      <p>Utilize o menu acima para administrar o sistema.</p>
+
+      <button class="botao" onclick="mostrarSecaoPorNome('agendamentos')">
+        📅 Ver Agendamentos
+      </button>
+
+      <button class="botao botao-secundario"
+              onclick="mostrarSecaoPorNome('clientes')">
+        👥 Ver Clientes
+      </button>
+    </div>
+
+  </section>
+
+  <!-- =========================
+       AGENDAMENTOS
+  ========================= -->
+
+  <section id="secao-agendamentos" class="secao">
+
+    <div class="cabecalho-secao">
+      <h2>📅 Agendamentos</h2>
+
+      <button class="botao" onclick="carregarAgendamentos()">
+        🔄 Atualizar
+      </button>
+    </div>
+
+    <div id="listaAgendamentos" class="lista"></div>
+
+  </section>
+
+  <!-- =========================
+       CLIENTES
+  ========================= -->
+
+  <section id="secao-clientes" class="secao">
+
+    <div class="cabecalho-secao">
+      <h2>👥 Clientes</h2>
+
+      <button class="botao" onclick="carregarClientes()">
+        🔄 Atualizar
+      </button>
+    </div>
+
+    <div id="listaClientes" class="lista"></div>
+
+  </section>
+
+  <!-- =========================
+       SERVIÇOS
+  ========================= -->
+
+  <section id="secao-servicos" class="secao">
+
+    <div class="cabecalho-secao">
+      <h2>💕 Serviços</h2>
+
+      <button class="botao" onclick="abrirFormularioServico()">
+        + Novo Serviço
+      </button>
+    </div>
+
+    <div id="formServico" class="formulario">
+
+      <input type="hidden" id="servicoId">
+
+      <div class="grupo">
+        <label for="nomeServico">Nome do serviço</label>
+        <input type="text" id="nomeServico"
+               placeholder="Ex.: Fio a Fio">
+      </div>
+
+      <div class="grupo">
+        <label for="precoServico">Preço</label>
+        <input type="number" id="precoServico"
+               step="0.01" min="0"
+               placeholder="100.00">
+      </div>
+
+      <div class="grupo">
+        <label for="descricaoServico">Descrição</label>
+        <textarea id="descricaoServico"
+                  placeholder="Descrição do serviço"></textarea>
+      </div>
+
+      <div class="botoes-formulario">
+        <button class="botao" onclick="salvarServico()">
+          💾 Salvar
+        </button>
+
+        <button class="botao botao-secundario"
+                onclick="fecharFormularioServico()">
+          Cancelar
+        </button>
+      </div>
+
+    </div>
+
+    <div id="listaServicos" class="grade-servicos"></div>
+
+  </section>
+
+  <!-- =========================
+       PORTFÓLIO
+  ========================= -->
+
+  <section id="secao-portfolio" class="secao">
+
+    <div class="cabecalho-secao">
+      <h2>📸 Portfólio</h2>
+
+      <button class="botao" onclick="abrirFormularioPortfolio()">
+        + Nova Foto
+      </button>
+    </div>
+
+    <div id="formPortfolio" class="formulario">
+
+      <input type="hidden" id="portfolioId">
+
+      <div class="grupo">
+        <label for="nomePortfolio">Nome do modelo</label>
+        <input type="text" id="nomePortfolio"
+               placeholder="Ex.: Volume Brasileiro">
+      </div>
+
+      <div class="grupo">
+        <label for="imagemPortfolio">URL da imagem</label>
+        <input type="url" id="imagemPortfolio"
+               placeholder="https://...">
+      </div>
+
+      <div class="grupo">
+        <label for="arquivoPortfolio">
+          Ou selecione uma imagem
+        </label>
+        <input type="file"
+               id="arquivoPortfolio"
+               accept="image/*">
+      </div>
+
+      <div class="grupo">
+        <label for="descricaoPortfolio">Descrição</label>
+        <textarea id="descricaoPortfolio"
+                  placeholder="Descrição do modelo"></textarea>
+      </div>
+
+      <div class="botoes-formulario">
+        <button class="botao" onclick="salvarPortfolio()">
+          💾 Salvar
+        </button>
+
+        <button class="botao botao-secundario"
+                onclick="fecharFormularioPortfolio()">
+          Cancelar
+        </button>
+      </div>
+
+    </div>
+
+    <div id="listaPortfolio" class="grade-portfolio"></div>
+
+  </section>
+
+  <!-- =========================
+       USUÁRIOS
+  ========================= -->
+
+  <section id="secao-usuarios" class="secao">
+
+    <div class="cabecalho-secao">
+      <h2>👤 Usuários</h2>
+
+      <button class="botao" onclick="carregarUsuarios()">
+        🔄 Atualizar
+      </button>
+    </div>
+
+    <div id="listaUsuarios" class="lista"></div>
+
+  </section>
+
+</main>
+
+<footer>
+  <p>✨ Lash Designer — Painel Administrativo 💗</p>
+</footer>
+
+<script>
+
+  /* =====================================================
+     VARIÁVEIS
+  ===================================================== */
+
+  let usuarioAtual = null;
+
+  /* =====================================================
+     VERIFICAR LOGIN E ADMIN
+  ===================================================== */
+
+  auth.onAuthStateChanged(async (user) => {
+
+    if (!user) {
+        window.location.href = "login.html";
+        return;
+    }
+
+    usuarioAtual = user;
+
+    console.log("===== VERIFICAÇÃO DO ADMIN =====");
+    console.log("E-mail:", user.email);
+    console.log("UID:", user.uid);
+
+    try {
+
+        const doc = await db
+            .collection("usuarios")
+            .doc(user.uid)
+            .get();
+
+        console.log("Documento existe?", doc.exists);
+
+        if (doc.exists) {
+            console.log("Dados do usuário:", doc.data());
+            console.log("Perfil encontrado:", doc.data().perfil);
+        } else {
+            console.log(
+                "ATENÇÃO: Não existe usuarios/" + user.uid
+            );
+        }
+
+        if (!doc.exists) {
+
+            alert(
+                "Usuário não encontrado na coleção usuarios.\n\n" +
+                "UID do login:\n" + user.uid
+            );
+
+            await auth.signOut();
+            window.location.href = "login.html";
+            return;
+        }
+
+        if (doc.data().perfil !== "admin") {
+
+            alert(
+                "Acesso negado.\n\n" +
+                "O usuário foi encontrado, mas o perfil é: " +
+                (doc.data().perfil || "não informado") +
+                "\n\n" +
+                "O perfil precisa ser exatamente: admin"
+            );
+
+            await auth.signOut();
+            window.location.href = "login.html";
+            return;
+        }
+
+        console.log("ADMINISTRADOR CONFIRMADO!");
+
+        document.getElementById("carregando").style.display = "none";
+
+        carregarTudo();
+
+    } catch (erro) {
+
+        console.error("ERRO AO VERIFICAR ADMIN:", erro);
+
+        mostrarMensagem(
+            "Não foi possível verificar seu acesso.",
+            "erro"
+        );
+    }
+
+});
+
+
+  /* =====================================================
+     CARREGAR TUDO
+  ===================================================== */
+
+  async function carregarTudo() {
+
+    await Promise.all([
+      carregarAgendamentos(),
+      carregarClientes(),
+      carregarServicos(),
+      carregarPortfolio(),
+      carregarUsuarios()
+    ]);
+
+    atualizarResumo();
+  }
+
+
+  /* =====================================================
+     NAVEGAÇÃO
+  ===================================================== */
+
+  function mostrarSecao(nome, botao) {
+
+    document.querySelectorAll(".secao").forEach(secao => {
+      secao.classList.remove("ativa");
+    });
+
+    const secao = document.getElementById("secao-" + nome);
+
+    if (secao) {
+      secao.classList.add("ativa");
+    }
+
+    document.querySelectorAll("nav button").forEach(btn => {
+      btn.classList.remove("ativo");
+    });
+
+    if (botao) {
+      botao.classList.add("ativo");
+    }
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+
+
+  function mostrarSecaoPorNome(nome) {
+
+    const botoes = document.querySelectorAll("nav button");
+
+    botoes.forEach(botao => {
+
+      if (
+        botao.textContent.toLowerCase().includes(
+          nome === "agendamentos" ? "agendamentos" :
+          nome === "clientes" ? "clientes" :
+          nome
+        )
+      ) {
+        mostrarSecao(nome, botao);
+      }
+
+    });
+
+  }
+
+
+  /* =====================================================
+     MENSAGENS
+  ===================================================== */
+
+  function mostrarMensagem(texto, tipo = "info") {
+
+    const mensagem = document.getElementById("mensagem");
+
+    mensagem.textContent = texto;
+
+    mensagem.className = "";
+
+    mensagem.id = "mensagem";
+
+    mensagem.classList.add(tipo);
+
+    mensagem.style.display = "block";
+
+    setTimeout(() => {
+      mensagem.style.display = "none";
+    }, 3500);
+  }
+
+
+  /* =====================================================
+     AGENDAMENTOS
+  ===================================================== */
+
+  async function carregarAgendamentos() {
+
+    const lista = document.getElementById("listaAgendamentos");
+
+    lista.innerHTML =
+      '<div class="vazio">🔄 Carregando agendamentos...</div>';
+
+    try {
+
+      const snapshot = await db
+        .collection("agendamentos")
+        .get();
+
+      lista.innerHTML = "";
+
+      if (snapshot.empty) {
+
+        lista.innerHTML = `
+          <div class="vazio">
+            📅 Nenhum agendamento encontrado.
+          </div>
+        `;
+
+        atualizarResumo();
+
+        return;
+      }
+
+      const agendamentos = [];
+
+      snapshot.forEach(doc => {
+
+        const dados = doc.data();
+
+        agendamentos.push({
+          id: doc.id,
+          ...dados
+        });
+
+      });
+
+      agendamentos.sort((a, b) => {
+
+        const dataA =
+          `${a.data || ""} ${a.horario || ""}`;
+
+        const dataB =
+          `${b.data || ""} ${b.horario || ""}`;
+
+        return dataA.localeCompare(dataB);
+
+      });
+
+      agendamentos.forEach(agendamento => {
+
+        const div = document.createElement("div");
+
+        div.className = "card";
+
+        div.innerHTML = `
+          <h3>💗 ${escaparHTML(
+            agendamento.nome || "Cliente não informada"
+          )}</h3>
+
+          <p>
+            <strong>📞 Telefone:</strong>
+            ${escaparHTML(
+              agendamento.telefone || "Não informado"
+            )}
+          </p>
+
+          <p>
+            <strong>📅 Data:</strong>
+            ${escaparHTML(
+              formatarData(agendamento.data)
+            )}
+          </p>
+
+          <p>
+            <strong>⏰ Horário:</strong>
+            ${escaparHTML(
+              agendamento.horario || "Não informado"
+            )}
+          </p>
+
+          <p>
+            <strong>💕 Serviço:</strong>
+            ${escaparHTML(
+              agendamento.servico || "Não informado"
+            )}
+          </p>
+
+          <button
+            class="botao botao-excluir botao-pequeno"
+            onclick="excluirAgendamento('${agendamento.id}')">
+            🗑️ Excluir
+          </button>
+        `;
+
+        lista.appendChild(div);
+
+      });
+
+      atualizarResumo();
+
+    } catch (erro) {
+
+      console.error("Erro ao carregar agendamentos:", erro);
+
+      lista.innerHTML = `
+        <div class="vazio">
+          ❌ Erro ao carregar os agendamentos.
+        </div>
+      `;
+    }
+
+  }
+
+
+  async function excluirAgendamento(id) {
+
+    if (
+      !confirm(
+        "Deseja realmente excluir este agendamento?"
+      )
+    ) {
+      return;
+    }
+
+    try {
+
+      await db
+        .collection("agendamentos")
+        .doc(id)
+        .delete();
+
+      mostrarMensagem(
+        "Agendamento excluído com sucesso!",
+        "sucesso"
+      );
+
+      carregarAgendamentos();
+
+    } catch (erro) {
+
+      console.error(erro);
+
+      mostrarMensagem(
+        "Não foi possível excluir o agendamento.",
+        "erro"
+      );
+    }
+
+  }
+
+
+  /* =====================================================
+     CLIENTES
+  ===================================================== */
+
+  async function carregarClientes() {
+
+    const lista = document.getElementById("listaClientes");
+
+    lista.innerHTML =
+      '<div class="vazio">🔄 Carregando clientes...</div>';
+
+    try {
+
+      const snapshot = await db
+        .collection("usuarios")
+        .get();
+
+      lista.innerHTML = "";
+
+      let quantidade = 0;
+
+      snapshot.forEach(doc => {
+
+        const usuario = doc.data();
+
+        if (usuario.perfil === "admin") {
+          return;
+        }
+
+        quantidade++;
+
+        const div = document.createElement("div");
+
+        div.className = "card";
+
+        div.innerHTML = `
+          <h3>👤 ${escaparHTML(
+            usuario.nome ||
+            usuario.nomeCompleto ||
+            "Cliente"
+          )}</h3>
+
+          <p>
+            <strong>📧 Email:</strong>
+            ${escaparHTML(
+              usuario.email || "Não informado"
+            )}
+          </p>
+
+          <p>
+            <strong>📞 Telefone:</strong>
+            ${escaparHTML(
+              usuario.telefone || "Não informado"
+            )}
+          </p>
+
+          <span class="badge badge-cliente">
+            Cliente
+          </span>
+        `;
+
+        lista.appendChild(div);
+
+      });
+
+      if (quantidade === 0) {
+
+        lista.innerHTML = `
+          <div class="vazio">
+            👥 Nenhuma cliente cadastrada.
+          </div>
+        `;
+
+      }
+
+      document.getElementById("totalClientes").textContent =
+        quantidade;
+
+      atualizarResumo();
+
+    } catch (erro) {
+
+      console.error("Erro ao carregar clientes:", erro);
+
+      lista.innerHTML = `
+        <div class="vazio">
+          ❌ Erro ao carregar clientes.
+        </div>
+      `;
+    }
+
+  }
+
+
+  /* =====================================================
+     SERVIÇOS
+  ===================================================== */
+
+  async function carregarServicos() {
+
+    const lista = document.getElementById("listaServicos");
+
+    lista.innerHTML =
+      '<div class="vazio">🔄 Carregando serviços...</div>';
+
+    try {
+
+      const snapshot = await db
+        .collection("servicos")
+        .get();
+
+      lista.innerHTML = "";
+
+      if (snapshot.empty) {
+
+        lista.innerHTML = `
+          <div class="vazio">
+            💕 Nenhum serviço cadastrado.
+          </div>
+        `;
+
+        document.getElementById("totalServicos").textContent = 0;
+
+        return;
+      }
+
+      let quantidade = 0;
+
+      snapshot.forEach(doc => {
+
+        quantidade++;
+
+        const servico = doc.data();
+
+        const div = document.createElement("div");
+
+        div.className = "servico-card";
+
+        div.innerHTML = `
+          <h3>
+            💕 ${escaparHTML(
+              servico.nome || "Serviço"
+            )}
+          </h3>
+
+          <p>
+            ${escaparHTML(
+              servico.descricao || "Sem descrição."
+            )}
+          </p>
+
+          <p class="preco">
+            R$ ${Number(
+              servico.preco || 0
+            ).toFixed(2).replace(".", ",")}
+          </p>
+
+          <button
+            class="botao botao-editar botao-pequeno"
+            onclick="editarServico(
+              '${doc.id}',
+              '${escaparAtributo(servico.nome || "")}',
+              '${servico.preco || 0}',
+              '${escaparAtributo(servico.descricao || "")}'
+            )">
+            ✏️ Editar
+          </button>
+
+          <button
+            class="botao botao-excluir botao-pequeno"
+            onclick="excluirServico('${doc.id}')">
+            🗑️ Excluir
+          </button>
+        `;
+
+        lista.appendChild(div);
+
+      });
+
+      document.getElementById("totalServicos").textContent =
+        quantidade;
+
+    } catch (erro) {
+
+      console.error("Erro ao carregar serviços:", erro);
+
+      lista.innerHTML = `
+        <div class="vazio">
+          ❌ Erro ao carregar serviços.
+        </div>
+      `;
+    }
+
+  }
+
+
+  function abrirFormularioServico() {
+
+    document.getElementById("formServico")
+      .classList.add("ativo");
+
+    document.getElementById("servicoId").value = "";
+    document.getElementById("nomeServico").value = "";
+    document.getElementById("precoServico").value = "";
+    document.getElementById("descricaoServico").value = "";
+
+  }
+
+
+  function fecharFormularioServico() {
+
+    document.getElementById("formServico")
+      .classList.remove("ativo");
+
+  }
+
+
+  async function salvarServico() {
+
+    const id =
+      document.getElementById("servicoId").value;
+
+    const nome =
+      document.getElementById("nomeServico").value.trim();
+
+    const preco =
+      parseFloat(
+        document.getElementById("precoServico").value
+      );
+
+    const descricao =
+      document.getElementById("descricaoServico").value.trim();
+
+    if (!nome || isNaN(preco)) {
+
+      alert("Preencha o nome e o preço do serviço.");
+
+      return;
+    }
+
+    const dados = {
+      nome: nome,
+      preco: preco,
+      descricao: descricao
+    };
+
+    try {
+
+      if (id) {
+
+        await db
+          .collection("servicos")
+          .doc(id)
+          .update(dados);
+
+        mostrarMensagem(
+          "Serviço atualizado com sucesso!",
+          "sucesso"
+        );
+
+      } else {
+
+        await db
+          .collection("servicos")
+          .add(dados);
+
+        mostrarMensagem(
+          "Serviço adicionado com sucesso!",
+          "sucesso"
+        );
+      }
+
+      fecharFormularioServico();
+
+      carregarServicos();
+
+    } catch (erro) {
+
+      console.error(erro);
+
+      mostrarMensagem(
+        "Erro ao salvar o serviço.",
+        "erro"
+      );
+    }
+
+  }
+
+
+  function editarServico(
+    id,
+    nome,
+    preco,
+    descricao
+  ) {
+
+    document.getElementById("formServico")
+      .classList.add("ativo");
+
+    document.getElementById("servicoId").value = id;
+    document.getElementById("nomeServico").value =
+      decodificarAtributo(nome);
+
+    document.getElementById("precoServico").value =
+      preco;
+
+    document.getElementById("descricaoServico").value =
+      decodificarAtributo(descricao);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  }
+
+
+  async function excluirServico(id) {
+
+    if (!confirm("Deseja realmente excluir este serviço?")) {
+      return;
+    }
+
+    try {
+
+      await db
+        .collection("servicos")
+        .doc(id)
+        .delete();
+
+      mostrarMensagem(
+        "Serviço excluído com sucesso!",
+        "sucesso"
+      );
+
+      carregarServicos();
+
+    } catch (erro) {
+
+      console.error(erro);
+
+      mostrarMensagem(
+        "Erro ao excluir serviço.",
+        "erro"
+      );
+    }
+
+  }
+
+
+  /* =====================================================
+     PORTFÓLIO
+  ===================================================== */
+
+  async function carregarPortfolio() {
+
+    const lista =
+      document.getElementById("listaPortfolio");
+
+    lista.innerHTML =
+      '<div class="vazio">🔄 Carregando portfólio...</div>';
+
+    try {
+
+      const snapshot = await db
+        .collection("portfolio")
+        .get();
+
+      lista.innerHTML = "";
+
+      if (snapshot.empty) {
+
+        lista.innerHTML = `
+          <div class="vazio">
+            📸 Nenhuma imagem cadastrada no portfólio.
+          </div>
+        `;
+
+        return;
+      }
+
+      snapshot.forEach(doc => {
+
+        const item = doc.data();
+
+        const card =
+          document.createElement("div");
+
+        card.className =
+          "portfolio-card";
+
+        card.innerHTML = `
+          <img
+            src="${escaparAtributo(
+              item.imagem || ""
+            )}"
+            alt="${escaparAtributo(
+              item.nome || "Modelo de cílios"
+            )}"
+            onerror="this.src=''; this.alt='Imagem não disponível';"
+          >
+
+          <div class="portfolio-info">
+
+            <h3>
+              ${escaparHTML(
+                item.nome || "Modelo"
+              )}
+            </h3>
+
+            <p>
+              ${escaparHTML(
+                item.descricao || ""
+              )}
+            </p>
+
+            <button
+              class="botao botao-editar botao-pequeno"
+              onclick="editarPortfolio(
+                '${doc.id}',
+                '${escaparAtributo(item.nome || "")}',
+                '${escaparAtributo(item.imagem || "")}',
+                '${escaparAtributo(item.descricao || "")}'
+              )">
+              ✏️ Editar
+            </button>
+
+            <button
+              class="botao botao-excluir botao-pequeno"
+              onclick="excluirPortfolio('${doc.id}')">
+              🗑️ Excluir
+            </button>
+
+          </div>
+        `;
+
+        lista.appendChild(card);
+
+      });
+
+    } catch (erro) {
+
+      console.error(
+        "Erro ao carregar portfólio:",
+        erro
+      );
+
+      lista.innerHTML = `
+        <div class="vazio">
+          ❌ Erro ao carregar o portfólio.
+        </div>
+      `;
+    }
+
+  }
+
+
+  function abrirFormularioPortfolio() {
+
+    document.getElementById("formPortfolio")
+      .classList.add("ativo");
+
+    document.getElementById("portfolioId").value = "";
+    document.getElementById("nomePortfolio").value = "";
+    document.getElementById("imagemPortfolio").value = "";
+    document.getElementById("arquivoPortfolio").value = "";
+    document.getElementById("descricaoPortfolio").value = "";
+
+  }
+
+
+  function fecharFormularioPortfolio() {
+
+    document.getElementById("formPortfolio")
+      .classList.remove("ativo");
+
+  }
+
+
+  async function salvarPortfolio() {
+
+    const id =
+      document.getElementById("portfolioId").value;
+
+    const nome =
+      document.getElementById("nomePortfolio")
+        .value.trim();
+
+    const imagemURL =
+      document.getElementById("imagemPortfolio")
+        .value.trim();
+
+    const arquivo =
+      document.getElementById("arquivoPortfolio")
+        .files[0];
+
+    const descricao =
+      document.getElementById("descricaoPortfolio")
+        .value.trim();
+
+    if (!nome) {
+
+      alert("Informe o nome do modelo.");
+
+      return;
+    }
+
+    try {
+
+      let imagem = imagemURL;
+
+      /*
+        Se o usuário escolher um arquivo,
+        tenta enviar para o Firebase Storage.
+      */
+
+      if (arquivo) {
+
+        const nomeArquivo =
+          "portfolio/" +
+          Date.now() +
+          "_" +
+          arquivo.name;
+
+        const referencia =
+          storage.ref(nomeArquivo);
+
+        const upload =
+          await referencia.put(arquivo);
+
+        imagem =
+          await upload.ref.getDownloadURL();
+      }
+
+      if (!imagem) {
+
+        alert(
+          "Informe uma URL ou selecione uma imagem."
+        );
+
+        return;
+      }
+
+      const dados = {
+        nome: nome,
+        imagem: imagem,
+        descricao: descricao
+      };
+
+      if (id) {
+
+        await db
+          .collection("portfolio")
+          .doc(id)
+          .update(dados);
+
+        mostrarMensagem(
+          "Imagem atualizada com sucesso!",
+          "sucesso"
+        );
+
+      } else {
+
+        await db
+          .collection("portfolio")
+          .add(dados);
+
+        mostrarMensagem(
+          "Imagem adicionada ao portfólio!",
+          "sucesso"
+        );
+      }
+
+      fecharFormularioPortfolio();
+
+      carregarPortfolio();
+
+    } catch (erro) {
+
+      console.error(
+        "Erro ao salvar portfólio:",
+        erro
+      );
+
+      mostrarMensagem(
+        "Não foi possível salvar a imagem. Verifique o Firebase Storage.",
+        "erro"
+      );
+    }
+
+  }
+
+
+  function editarPortfolio(
+    id,
+    nome,
+    imagem,
+    descricao
+  ) {
+
+    document.getElementById("formPortfolio")
+      .classList.add("ativo");
+
+    document.getElementById("portfolioId").value =
+      id;
+
+    document.getElementById("nomePortfolio").value =
+      decodificarAtributo(nome);
+
+    document.getElementById("imagemPortfolio").value =
+      decodificarAtributo(imagem);
+
+    document.getElementById("descricaoPortfolio").value =
+      decodificarAtributo(descricao);
+
+    document.getElementById("arquivoPortfolio").value =
+      "";
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+
+  }
+
+
+  async function excluirPortfolio(id) {
+
+    if (
+      !confirm(
+        "Deseja realmente excluir esta imagem?"
+      )
+    ) {
+      return;
+    }
+
+    try {
+
+      await db
+        .collection("portfolio")
+        .doc(id)
+        .delete();
+
+      mostrarMensagem(
+        "Imagem removida do portfólio.",
+        "sucesso"
+      );
+
+      carregarPortfolio();
+
+    } catch (erro) {
+
+      console.error(erro);
+
+      mostrarMensagem(
+        "Erro ao excluir imagem.",
+        "erro"
+      );
+    }
+
+  }
+
+
+  /* =====================================================
+     USUÁRIOS
+  ===================================================== */
+
+  async function carregarUsuarios() {
+
+    const lista =
+      document.getElementById("listaUsuarios");
+
+    lista.innerHTML =
+      '<div class="vazio">🔄 Carregando usuários...</div>';
+
+    try {
+
+      const snapshot = await db
+        .collection("usuarios")
+        .get();
+
+      lista.innerHTML = "";
+
+      if (snapshot.empty) {
+
+        lista.innerHTML = `
+          <div class="vazio">
+            👤 Nenhum usuário encontrado.
+          </div>
+        `;
+
+        return;
+      }
+
+      snapshot.forEach(doc => {
+
+        const usuario = doc.data();
+
+        const div =
+          document.createElement("div");
+
+        div.className =
+          "card usuario";
+
+        const isAdmin =
+          usuario.perfil === "admin";
+
+        div.innerHTML = `
+          <div>
+
+            <h3>
+              👤 ${escaparHTML(
+                usuario.nome ||
+                usuario.nomeCompleto ||
+                "Usuário"
+              )}
+            </h3>
+
+            <p>
+              <strong>📧 Email:</strong>
+              ${escaparHTML(
+                usuario.email ||
+                "Não informado"
+              )}
+            </p>
+
+          </div>
+
+          <div>
+
+            ${
+              isAdmin
+
+              ?
+
+              `<span class="badge badge-admin">
+                👑 Administrador
+              </span>`
+
+              :
+
+              `<span class="badge badge-cliente">
+                Cliente
+              </span>
+
+              <br>
+
+              <button
+                class="botao botao-pequeno"
+                onclick="promoverUsuario('${doc.id}')">
+                👑 Tornar Admin
+              </button>`
+            }
+
+          </div>
+        `;
+
+        lista.appendChild(div);
+
+      });
+
+    } catch (erro) {
+
+      console.error(
+        "Erro ao carregar usuários:",
+        erro
+      );
+
+      lista.innerHTML = `
+        <div class="vazio">
+          ❌ Erro ao carregar usuários.
+        </div>
+      `;
+    }
+
+  }
+
+
+  async function promoverUsuario(uid) {
+
+    if (
+      !confirm(
+        "Deseja tornar este usuário administrador?"
+      )
+    ) {
+      return;
+    }
+
+    try {
+
+      await db
+        .collection("usuarios")
+        .doc(uid)
+        .update({
+          perfil: "admin"
+        });
+
+      mostrarMensagem(
+        "Usuário promovido a administrador!",
+        "sucesso"
+      );
+
+      carregarUsuarios();
+
+    } catch (erro) {
+
+      console.error(erro);
+
+      mostrarMensagem(
+        "Não foi possível promover o usuário.",
+        "erro"
+      );
+    }
+
+  }
+
+
+  /* =====================================================
+     RESUMO
+  ===================================================== */
+
+  async function atualizarResumo() {
+
+    try {
+
+      const agendamentos =
+        await db
+          .collection("agendamentos")
+          .get();
+
+      document.getElementById(
+        "totalAgendamentos"
+      ).textContent =
+        agendamentos.size;
+
+      const usuarios =
+        await db
+          .collection("usuarios")
+          .get();
+
+      let clientes = 0;
+
+      usuarios.forEach(doc => {
+
+        if (doc.data().perfil !== "admin") {
+          clientes++;
+        }
+
+      });
+
+      document.getElementById(
+        "totalClientes"
+      ).textContent =
+        clientes;
+
+      const servicos =
+        await db
+          .collection("servicos")
+          .get();
+
+      document.getElementById(
+        "totalServicos"
+      ).textContent =
+        servicos.size;
+
+    } catch (erro) {
+
+      console.error(
+        "Erro ao atualizar resumo:",
+        erro
+      );
+    }
+
+  }
+
+
+  /* =====================================================
+     LOGOUT
+  ===================================================== */
+
+  function sair() {
+
+    auth.signOut()
+      .then(() => {
+
+        window.location.href =
+          "login.html";
+
+      })
+      .catch(erro => {
+
+        console.error(
+          "Erro ao sair:",
+          erro
+        );
+
+      });
+
+  }
+
+
+  /* =====================================================
+     FORMATAR DATA
+  ===================================================== */
+
+  function formatarData(data) {
+
+    if (!data) {
+      return "Não informada";
+    }
+
+    const partes =
+      String(data).split("-");
+
+    if (partes.length === 3) {
+
+      return `${partes[2]}/${partes[1]}/${partes[0]}`;
+
+    }
+
+    return data;
+  }
+
+
+  /* =====================================================
+     SEGURANÇA HTML
+  ===================================================== */
+
+  function escaparHTML(texto) {
+
+    return String(texto)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+
+  }
+
+
+  function escaparAtributo(texto) {
+
+    return String(texto)
+      .replace(/\\/g, "\\\\")
+      .replace(/'/g, "\\'")
+      .replace(/"/g, "&quot;")
+      .replace(/\n/g, " ");
+
+  }
+
+
+  function decodificarAtributo(texto) {
+
+    return String(texto)
+      .replace(/&quot;/g, '"')
+      .replace(/&#039;/g, "'");
+
+  }
+
+</script>
+
 </body>
 </html>
