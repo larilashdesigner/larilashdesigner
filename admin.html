@@ -775,41 +775,17 @@
     try {
 
         const doc = await db
-            .collection("usuarios")
+            .collection("admins")
             .doc(user.uid)
             .get();
 
-        console.log("Documento existe?", doc.exists);
-
-        if (doc.exists) {
-            console.log("Dados do usuário:", doc.data());
-            console.log("Perfil encontrado:", doc.data().perfil);
-        } else {
-            console.log(
-                "ATENÇÃO: Não existe usuarios/" + user.uid
-            );
-        }
+        console.log("Documento em admins existe?", doc.exists);
 
         if (!doc.exists) {
 
             alert(
-                "Usuário não encontrado na coleção usuarios.\n\n" +
+                "Usuário não encontrado na coleção admins.\n\n" +
                 "UID do login:\n" + user.uid
-            );
-
-            await auth.signOut();
-            window.location.href = "login.html";
-            return;
-        }
-
-        if (doc.data().perfil !== "admin") {
-
-            alert(
-                "Acesso negado.\n\n" +
-                "O usuário foi encontrado, mas o perfil é: " +
-                (doc.data().perfil || "não informado") +
-                "\n\n" +
-                "O perfil precisa ser exatamente: admin"
             );
 
             await auth.signOut();
