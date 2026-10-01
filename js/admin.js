@@ -5,15 +5,15 @@ auth.onAuthStateChanged(user => {
   if (!user) return window.location.href = "index.html";
   usuarioAtual = user;
 
-  db.collection("usuarios").doc(user.uid).get().then(doc => {
-    if (!doc.exists || doc.data().perfil !== "admin") {
-      alert("Acesso negado.");
-      window.location.href = "index.html";
-    } else {
-      carregarProdutos();
-      carregarUsuarios();
-    }
-  });
+ db.collection("admins").doc(user.uid).get().then(doc => {
+  if (!doc.exists) {
+    alert("Acesso negado. Este usuário não é administrador.");
+    window.location.href = "index.html";
+  } else {
+    carregarProdutos();
+    carregarUsuarios();
+  }
+   });
 });
 
 function alternarEntradaImagem() {
