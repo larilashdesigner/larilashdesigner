@@ -775,25 +775,41 @@
     try {
 
         const doc = await db
-            .collection("admins")
-            .doc(user.uid)
-            .get();
+    .collection("usuarios")
+    .doc(user.uid)
+    .get();
 
-        console.log("Documento em admins existe?", doc.exists);
+console.log("Documento em usuarios existe?", doc.exists);
 
-        if (!doc.exists) {
+if (!doc.exists) {
+    alert(
+        "Usuário não encontrado na coleção usuarios.\n\n" +
+        "UID do login:\n" + user.uid
+    );
 
-            alert(
-                "Usuário não encontrado na coleção admins.\n\n" +
-                "UID do login:\n" + user.uid
-            );
+    await auth.signOut();
+    window.location.href = "login.html";
+    return;
+}
 
-            await auth.signOut();
-            window.location.href = "login.html";
-            return;
-        }
+const dadosUsuario = doc.data();
 
-        console.log("ADMINISTRADOR CONFIRMADO!");
+console.log("Dados do usuário:", dadosUsuario);
+console.log("Perfil:", dadosUsuario.perfil);
+
+if (dadosUsuario.perfil !== "admin") {
+    alert("Acesso negado. Este usuário não é administrador.");
+
+    await auth.signOut();
+    window.location.href = "login.html";
+    return;
+}
+
+console.log("ADMINISTRADOR CONFIRMADO!");
+
+document.getElementById("carregando").style.display = "none";
+
+carregarTudo();
 
         document.getElementById("carregando").style.display = "none";
 
