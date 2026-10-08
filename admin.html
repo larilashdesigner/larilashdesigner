@@ -759,8 +759,7 @@
      VERIFICAR LOGIN E ADMIN
   ===================================================== */
 
-  auth.onAuthStateChanged(async (user) => {
-
+ auth.onAuthStateChanged(async (user) => {
     if (!user) {
         window.location.href = "login.html";
         return;
@@ -768,55 +767,44 @@
 
     usuarioAtual = user;
 
-    console.log("===== VERIFICAÇÃO DO ADMIN =====");
-    console.log("E-mail:", user.email);
     console.log("UID:", user.uid);
 
     try {
-
         const doc = await db
-    .collection("usuarios")
-    .doc(user.uid)
-    .get();
+            .collection("usuarios")
+            .doc(user.uid)
+            .get();
 
-console.log("Documento em usuarios existe?", doc.exists);
+        console.log("Documento encontrado:", doc.exists);
 
-if (!doc.exists) {
-    alert(
-        "Usuário não encontrado na coleção usuarios.\n\n" +
-        "UID do login:\n" + user.uid
-    );
+        if (!doc.exists) {
+            alert(
+                "Usuário não encontrado na coleção usuarios.\n\n" +
+                "UID do login:\n" + user.uid
+            );
 
-    await auth.signOut();
-    window.location.href = "login.html";
-    return;
-}
+            await auth.signOut();
+            window.location.href = "login.html";
+            return;
+        }
 
-const dadosUsuario = doc.data();
+        const dadosUsuario = doc.data();
 
-console.log("Dados do usuário:", dadosUsuario);
-console.log("Perfil:", dadosUsuario.perfil);
+        if (dadosUsuario.perfil !== "admin") {
+            alert("Acesso negado. Este usuário não é administrador.");
 
-if (dadosUsuario.perfil !== "admin") {
-    alert("Acesso negado. Este usuário não é administrador.");
+            await auth.signOut();
+            window.location.href = "login.html";
+            return;
+        }
 
-    await auth.signOut();
-    window.location.href = "login.html";
-    return;
-}
-
-console.log("ADMINISTRADOR CONFIRMADO!");
-
-document.getElementById("carregando").style.display = "none";
-
-carregarTudo();
+        console.log("ADMINISTRADOR CONFIRMADO!");
 
         document.getElementById("carregando").style.display = "none";
 
         carregarTudo();
 
     } catch (erro) {
-
         console.error("ERRO AO VERIFICAR ADMIN:", erro);
 
         mostrarMensagem(
@@ -824,7 +812,6 @@ carregarTudo();
             "erro"
         );
     }
-
 });
 
 
